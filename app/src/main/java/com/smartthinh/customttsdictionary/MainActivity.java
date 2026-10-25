@@ -85,14 +85,7 @@ public class MainActivity extends Activity {
         btnMainImportDictionary.setOnClickListener(v -> launchImportFilePicker());
         btnMainSelectEngine.setOnClickListener(v -> showSelectEngineDialog());
         btnOpenSystemSettings.setOnClickListener(v -> openSystemTtsSettings());
-        btnOpenWebsite.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://smartthinh.com"));
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(MainActivity.this, "Không thể mở trình duyệt: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnOpenWebsite.setOnClickListener(v -> openWebsite());
 
         // 1. Chạm vào bộ từ điển:
         // - Nếu chưa được chọn: Chọn bộ này để sử dụng.
@@ -621,6 +614,15 @@ public class MainActivity extends Activity {
 
         builder.setNegativeButton(R.string.dialog_cancel, (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    private void openWebsite() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://smartthinh.com"));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Không thể mở trình duyệt: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openSystemTtsSettings() {

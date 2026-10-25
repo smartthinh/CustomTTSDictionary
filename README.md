@@ -35,7 +35,7 @@ Sau khi cài đặt tệp APK vào điện thoại, bạn thực hiện 2 bướ
 
 ## Hướng dẫn sử dụng các chức năng
 
-Toàn bộ các nút chức năng chính đều được sắp xếp trên một hàng ngang ở cạnh trên màn hình: Thêm từ điển, Nhập từ điển, Chọn công cụ TTS, Cài đặt TTS hệ thống, Truy cập trang web.
+Toàn bộ các nút chức năng chính đều được sắp xếp rõ ràng ở đầu màn hình, hỗ trợ tối đa khả năng tiếp cận cho các trình đọc màn hình (TalkBack, Jieshuo,...): Thêm từ điển, Nhập từ điển, Chọn công cụ TTS, Cài đặt TTS hệ thống, Truy cập trang web.
 
 ### 1. Cách tạo một bộ từ điển mới
 
