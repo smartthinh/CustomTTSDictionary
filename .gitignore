@@ -1,0 +1,14 @@
+# Build output
+build/
+*.idsig
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

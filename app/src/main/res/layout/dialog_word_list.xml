@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Trên đầu màn hình ở cạnh đầu là ô tìm kiếm -->
+    <EditText
+        android:id="@+id/etSearchWord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tìm kiếm từ..."
+        android:inputType="text"
+        android:singleLine="true"
+        android:padding="10dp"
+        android:background="#EAEAEA"
+        android:layout_marginBottom="6dp" />
+
+    <TextView
+        android:id="@+id/tvDialogWordCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chạm vào từ để sửa, nhấn giữ để xóa"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Diện tích lớn còn lại hiển thị danh sách từ từ trên xuống dưới -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minHeight="280dp">
+
+        <ListView
+            android:id="@+id/lvWords"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/divider"
+            android:dividerHeight="1dp" />
+
+        <TextView
+            android:id="@+id/tvEmptyWords"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Không tìm thấy từ nào phù hợp."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Nút Thêm từ, Nút xóa tất cả từ, nút xuất từ điển nằm dưới cùng ở đáy màn hình -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/btnAddWordInList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Thêm từ"
+            android:textColor="#FFFFFF"
+            android:background="#1976D2"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnClearAllWords"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Xóa tất cả từ"
+            android:textColor="#FFFFFF"
+            android:background="#D32F2F"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnExportDictionary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Xuất từ điển"
+            android:textColor="#FFFFFF"
+            android:background="#388E3C" />
+    </LinearLayout>
+
+</LinearLayout>

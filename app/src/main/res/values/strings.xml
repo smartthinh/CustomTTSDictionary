@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Custom TTS Dictionary</string>
+    <string name="tts_engine_name">Custom TTS Dictionary</string>
+    <string name="btn_add_dictionary">Thêm từ điển</string>
+    <string name="btn_import_dictionary">Nhập từ điển</string>
+    <string name="btn_select_engine">Chọn công cụ TTS</string>
+    <string name="btn_open_system_tts">Cài đặt TTS hệ thống</string>
+    <string name="btn_open_website">Truy cập trang web</string>
+    <string name="title_dict_list">Danh sách bộ từ điển:</string>
+    <string name="dialog_cancel">Hủy</string>
+    <string name="dialog_ok">OK</string>
+    <string name="title_add_dict_name">Nhập tên bộ từ điển</string>
+    <string name="hint_dict_name">Nhập tên bộ từ điển</string>
+    <string name="title_add_word_pair">Thiết lập từ điển</string>
+    <string name="hint_original_word">Nhập từ gốc</string>
+    <string name="hint_replacement_word">Nhập từ thay thế</string>
+    <string name="empty_dict_list">Chưa có bộ từ điển nào. Bấm \"Thêm từ điển\" hoặc \"Nhập từ điển\" để bắt đầu.</string>
+</resources>

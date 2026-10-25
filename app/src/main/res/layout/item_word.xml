@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvWordIndex"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="#E0F2F1"
+        android:gravity="center"
+        android:textColor="#00796B"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:text="1" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp">
+
+        <TextView
+            android:id="@+id/tvOriginalWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="từ không nên đọc"
+            android:textColor="#D32F2F"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReplacementWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="→ từ nên đọc"
+            android:textColor="#388E3C"
+            android:textSize="14sp"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="✏️"
+        android:textSize="14sp" />
+
+</LinearLayout>
