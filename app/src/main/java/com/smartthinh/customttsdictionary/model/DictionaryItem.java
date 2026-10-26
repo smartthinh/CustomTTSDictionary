@@ -62,7 +62,32 @@ public class DictionaryItem {
         String[] parts = line.split("\t");
         if (parts.length >= 2) {
             String orig = parts[0].trim();
-            String repl = parts[1];
+            if (orig.startsWith("\uFEFF")) {
+                orig = orig.substring(1).trim();
+            }
+            String repl = parts[1].trim();
+
+            // CLEANUP: Xu ly '的' (đích) va '了' (liễu) theo chuan zhcnViDict
+            if (orig.equals("的")) {
+                repl = "";
+            } else if (orig.endsWith("的")) {
+                if (repl.endsWith(" đích")) {
+                    repl = repl.substring(0, repl.length() - 5);
+                } else if (repl.endsWith("đích")) {
+                    repl = repl.substring(0, repl.length() - 4);
+                }
+            }
+
+            if (orig.equals("了")) {
+                repl = "";
+            } else if (orig.endsWith("了")) {
+                if (repl.endsWith(" liễu")) {
+                    repl = repl.substring(0, repl.length() - 5);
+                } else if (repl.endsWith("liễu")) {
+                    repl = repl.substring(0, repl.length() - 4);
+                }
+            }
+
             int cs = 0;
             int reg = 0;
             if (parts.length >= 3) {

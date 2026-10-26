@@ -32,6 +32,33 @@ public class DictionaryManager {
     private static volatile int cachedMaxKeyLength = 0;
     private static volatile boolean isCacheValid = false;
     private static volatile String cachedDictionaryName = null;
+    private static volatile boolean isChineseDictionary = false;
+
+    /**
+     * Bang anh xa dau cau tieng Trung sang Latin + khoang trang theo chuan zhcnViDict
+     */
+    public static final Map<String, String> PUNCT_MAP = new HashMap<>();
+    static {
+        PUNCT_MAP.put("。", ". ");
+        PUNCT_MAP.put("，", ", ");
+        PUNCT_MAP.put("、", ", ");
+        PUNCT_MAP.put("；", "; ");
+        PUNCT_MAP.put("：", ": ");
+        PUNCT_MAP.put("！", "! ");
+        PUNCT_MAP.put("？", "? ");
+        PUNCT_MAP.put("“", "\"");
+        PUNCT_MAP.put("”", "\"");
+        PUNCT_MAP.put("‘", "'");
+        PUNCT_MAP.put("’", "'");
+        PUNCT_MAP.put("（", " (");
+        PUNCT_MAP.put("）", ") ");
+        PUNCT_MAP.put("【", " [");
+        PUNCT_MAP.put("】", "] ");
+        PUNCT_MAP.put("《", " <");
+        PUNCT_MAP.put("》", "> ");
+        PUNCT_MAP.put("…", "... ");
+        PUNCT_MAP.put("—", "- ");
+    }
 
     /**
      * Lay thu muc luu tru trong VUNG RIENG TU NOI BO cua ung dung:
@@ -95,6 +122,7 @@ public class DictionaryManager {
         cachedRules = null;
         cachedMaxKeyLength = 0;
         cachedDictionaryName = null;
+        isChineseDictionary = false;
     }
 
     public static List<String> getDictionaryNames(Context context) {
@@ -130,7 +158,7 @@ public class DictionaryManager {
         if (!file.exists()) return items;
 
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8), 32768)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 DictionaryItem item = DictionaryItem.fromDicLine(line);
@@ -238,29 +266,111 @@ public class DictionaryManager {
 
             Map<String, String> rules = new HashMap<>();
             int maxLen = 0;
+            boolean detectedChinese = false;
 
             if (activeDict != null && !activeDict.isEmpty()) {
-                List<DictionaryItem> items = loadDictionary(context, activeDict);
-                for (DictionaryItem item : items) {
-                    String orig = item.getOriginalWord();
-                    if (!orig.isEmpty()) {
-                        String key = orig.toLowerCase(Locale.ROOT);
-                        rules.put(key, item.getReplacementWord());
-                        if (orig.length() > maxLen) {
-                            maxLen = orig.length();
+                File dir = getDictionaryDirectory(context);
+                File file = new File(dir, activeDict + FILE_EXTENSION);
+                if (!file.exists()) file = new File(dir, activeDict + ".txt");
+                if (!file.exists()) file = new File(dir, activeDict + ".json");
+
+                if (file.exists()) {
+                    long startTime = System.currentTimeMillis();
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8), 32768)) {
+                        String line;
+                        int count = 0;
+                        while ((line = reader.readLine()) != null) {
+                            line = line.trim();
+                            if (line.isEmpty() || line.startsWith("#")) {
+                                continue;
+                            }
+
+                            String[] parts = line.split("\t");
+                            if (parts.length >= 2) {
+                                String orig = parts[0].trim();
+                                if (orig.startsWith("\uFEFF")) {
+                                    orig = orig.substring(1).trim();
+                                }
+                                String repl = parts[1].trim();
+
+                                if (orig.isEmpty()) {
+                                    continue;
+                                }
+
+                                boolean isEntryChinese = containsChinese(orig);
+                                if (isEntryChinese) {
+                                    detectedChinese = true;
+                                }
+
+                                // 1. FILTER: Neu la tu tieng Trung va la dau cau toan giac -> bo qua de PUNCT_MAP xu ly
+                                if (isEntryChinese && PUNCT_MAP.containsKey(orig)) {
+                                    continue;
+                                }
+
+                                // 2. CLEANUP: Chi ap dung xu ly '的' va '了' neu tu goc chua chu Han
+                                if (isEntryChinese) {
+                                    if (orig.equals("的")) {
+                                        repl = "";
+                                    } else if (orig.endsWith("的")) {
+                                        if (repl.endsWith(" đích")) {
+                                            repl = repl.substring(0, repl.length() - 5);
+                                        } else if (repl.endsWith("đích")) {
+                                            repl = repl.substring(0, repl.length() - 4);
+                                        }
+                                    }
+
+                                    if (orig.equals("了")) {
+                                        repl = ""; // Mute '了'
+                                    } else if (orig.endsWith("了")) {
+                                        if (repl.endsWith(" liễu")) {
+                                            repl = repl.substring(0, repl.length() - 5);
+                                        } else if (repl.endsWith("liễu")) {
+                                            repl = repl.substring(0, repl.length() - 4);
+                                        }
+                                    }
+                                }
+
+                                // 3. FIRST ENTRY WINS: Giu nguyen nghia dau tien (nghia chuan nhat)
+                                if (!rules.containsKey(orig)) {
+                                    rules.put(orig, repl);
+                                    if (orig.length() > maxLen) {
+                                        maxLen = orig.length();
+                                    }
+                                }
+
+                                // Ho tro tim kiem khong phan biet hoa thuong cho tu Latinh
+                                String lower = orig.toLowerCase(Locale.ROOT);
+                                if (!lower.equals(orig) && !rules.containsKey(lower)) {
+                                    rules.put(lower, repl);
+                                }
+
+                                count++;
+                            }
                         }
+                        long elapsed = System.currentTimeMillis() - startTime;
+                        Log.d(TAG, "Da nap tu dien [" + activeDict + "]: " + rules.size() + " tu hop le (Trung-Viet: " + detectedChinese + ", mat " + elapsed + "ms)");
+                    } catch (Exception e) {
+                        Log.e(TAG, "Loi khi nap tu dien tu file: " + file.getName(), e);
                     }
                 }
             }
 
             cachedRules = rules;
-            cachedMaxKeyLength = Math.min(maxLen, 60);
+            cachedMaxKeyLength = Math.min(maxLen > 0 ? maxLen : 50, 50);
             cachedDictionaryName = activeDict;
+            isChineseDictionary = detectedChinese;
             isCacheValid = true;
-            Log.d(TAG, "Da nap RAM bo tu dien dang dung [" + activeDict + "]: " + rules.size() + " tu");
         }
     }
 
+    /**
+     * Thuat toan dich thuat va thay the tu dien ke thua hoan toan tu zhcnViDict:
+     * - Longest match first (toi da 50 ky tu)
+     * - Chuan hoa dau cau tieng Trung toan giac sang Latin + khoang cach (PUNCT_MAP)
+     * - Tu dong chen khoang trang thong minh (Smart Spacing) ngan chan dinh chu
+     * - Tu dong loai bo tro tu gay nhieu (nhu liễu, đích)
+     */
     public static String replaceFast(String text, Context context) {
         if (text == null || text.isEmpty()) {
             return text;
@@ -273,48 +383,99 @@ public class DictionaryManager {
         }
 
         int textLen = text.length();
-        int maxLen = cachedMaxKeyLength > 0 ? cachedMaxKeyLength : 30;
-        StringBuilder result = new StringBuilder(textLen + 32);
+        int maxLimit = cachedMaxKeyLength > 0 ? cachedMaxKeyLength : 50;
+        if (maxLimit > 50) maxLimit = 50;
+
+        StringBuilder result = new StringBuilder(textLen * 2);
 
         int i = 0;
+        boolean lastWasReplacement = false;
+
         while (i < textLen) {
-            int maxMatch = Math.min(maxLen, textLen - i);
+            int maxMatchLen = Math.min(maxLimit, textLen - i);
             boolean matched = false;
 
-            for (int len = maxMatch; len > 0; len--) {
-                String sub = text.substring(i, i + len);
-                String lowerSub = sub.toLowerCase(Locale.ROOT);
+            // Thu tim tu dai nhat truoc (Longest match first)
+            for (int len = maxMatchLen; len > 0; len--) {
+                String substring = text.substring(i, i + len);
+                String vietnamese = rules.get(substring);
 
-                String replacement = rules.get(lowerSub);
-                if (replacement != null) {
-                    boolean isLatinWord = isLatinWordOnly(lowerSub);
-                    boolean boundaryOk = true;
+                if (vietnamese == null) {
+                    vietnamese = rules.get(substring.toLowerCase(Locale.ROOT));
+                }
 
-                    if (isLatinWord) {
+                if (vietnamese != null) {
+                    // Kiem tra boundary cho tu Latinh de khong thay the nua chung tu khac
+                    if (isLatinWordOnly(substring)) {
+                        boolean boundaryOk = true;
                         if (i > 0 && Character.isLetterOrDigit(text.charAt(i - 1))) {
                             boundaryOk = false;
                         }
                         if (i + len < textLen && Character.isLetterOrDigit(text.charAt(i + len))) {
                             boundaryOk = false;
                         }
+                        if (!boundaryOk) {
+                            continue;
+                        }
                     }
 
-                    if (boundaryOk) {
-                        result.append(replacement);
-                        i += len;
-                        matched = true;
-                        break;
+                    // Add space BEFORE replacement if previous char was not space/punct
+                    if (!vietnamese.isEmpty()) {
+                        if (result.length() > 0) {
+                            char lastChar = result.charAt(result.length() - 1);
+                            if (" \t\n\r\"'([<{".indexOf(lastChar) == -1) {
+                                result.append(' ');
+                            }
+                        }
+                        result.append(vietnamese);
+                        lastWasReplacement = true;
                     }
+
+                    i += len;
+                    matched = true;
+                    break;
                 }
             }
 
             if (!matched) {
-                result.append(text.charAt(i));
+                // Ky tu khong khop trong tu dien
+                String currentCharStr = text.substring(i, i + 1);
+
+                // Chuan hoa dau cau tieng Trung (chi ap dung khi tu dien co chua chu Han)
+                String mappedPunct = isChineseDictionary ? PUNCT_MAP.get(currentCharStr) : null;
+                String charToAppend = mappedPunct != null ? mappedPunct : currentCharStr;
+
+                // Add space BEFORE original char IF previous was a replacement
+                // BUT NOT if current char is punctuation (comma, dot, etc)
+                if (lastWasReplacement) {
+                    char firstChar = charToAppend.charAt(0);
+                    if (" \t\n\r,.;:!?)[]>}'\"-_".indexOf(firstChar) == -1) {
+                        result.append(' ');
+                    }
+                }
+
+                result.append(charToAppend);
+                lastWasReplacement = false;
                 i++;
             }
         }
 
         return result.toString();
+    }
+
+    public static boolean containsChinese(String s) {
+        if (s == null) return false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+            if (block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
+                block == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
+                block == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+                block == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isLatinWordOnly(String s) {
