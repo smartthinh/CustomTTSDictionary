@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import com.smartthinh.customttsdictionary.model.DictionaryManager;
 import com.smartthinh.customttsdictionary.service.ProxyTtsService;
 import com.smartthinh.customttsdictionary.ui.DictionaryAdapter;
 import com.smartthinh.customttsdictionary.ui.WordAdapter;
+import com.smartthinh.customttsdictionary.util.AppLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppLogger.init(this);
         prefs = getSharedPreferences(ProxyTtsService.PREFS_NAME, MODE_PRIVATE);
 
         lvDictionaries = findViewById(R.id.lvDictionaries);
@@ -80,12 +83,16 @@ public class MainActivity extends Activity {
         Button btnMainSelectEngine = findViewById(R.id.btnMainSelectEngine);
         Button btnOpenSystemSettings = findViewById(R.id.btnOpenSystemSettings);
         Button btnOpenWebsite = findViewById(R.id.btnOpenWebsite);
+        Button btnViewLogs = findViewById(R.id.btnViewLogs);
 
         btnMainAddDictionary.setOnClickListener(v -> showAddDictionaryStep1());
         btnMainImportDictionary.setOnClickListener(v -> launchImportFilePicker());
         btnMainSelectEngine.setOnClickListener(v -> showSelectEngineDialog());
         btnOpenSystemSettings.setOnClickListener(v -> openSystemTtsSettings());
         btnOpenWebsite.setOnClickListener(v -> openWebsite());
+        if (btnViewLogs != null) {
+            btnViewLogs.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LogActivity.class)));
+        }
 
         // 1. Chạm vào bộ từ điển:
         // - Nếu chưa được chọn: Chọn bộ này để sử dụng.

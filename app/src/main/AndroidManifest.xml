@@ -40,6 +40,19 @@
             </intent-filter>
         </activity>
 
+        <!-- Man hinh nhat ky hoat dong chi tiet -->
+        <activity
+            android:name=".LogActivity"
+            android:exported="false"
+            android:label="Nhật ký hoạt động" />
+
+        <!-- Provider chia se tep nhat ky (.log) -->
+        <provider
+            android:name=".util.LogFileProvider"
+            android:authorities="com.smartthinh.customttsdictionary.logfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <!-- Dich vu TTS trung gian dong vai tro la mot Engine trong he thong Android -->
         <service
             android:name=".service.ProxyTtsService"

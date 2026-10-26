@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:padding="8dp">
+
+    <!-- Vùng hiển thị log chiếm toàn bộ từ đầu màn hình xuống sát đáy -->
+    <ScrollView
+        android:id="@+id/scrollLog"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/card_bg"
+        android:padding="10dp"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/tvLogContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:textIsSelectable="true"
+            android:text="Chưa có nhật ký hoạt động nào..." />
+    </ScrollView>
+
+    <!-- Thanh nút bấm ở dưới cùng đáy màn hình -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnSaveLog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:text="Lưu thành tệp"
+            android:textColor="#FFFFFF"
+            android:background="#2E7D32"
+            android:layout_marginEnd="6dp" />
+
+        <Button
+            android:id="@+id/btnCopyLog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:text="Sao chép"
+            android:textColor="#FFFFFF"
+            android:background="#1976D2"
+            android:layout_marginEnd="6dp" />
+
+        <Button
+            android:id="@+id/btnClearLog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="48dp"
+            android:text="Xóa nhật ký"
+            android:textColor="#FFFFFF"
+            android:background="#D32F2F" />
+    </LinearLayout>
+
+</LinearLayout>

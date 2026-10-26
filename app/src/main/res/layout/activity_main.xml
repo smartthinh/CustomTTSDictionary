@@ -79,17 +79,37 @@
                 android:paddingEnd="8dp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnOpenWebsite"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:minHeight="48dp"
-            android:text="@string/btn_open_website"
-            android:textColor="#FFFFFF"
-            android:background="#6A1B9A"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <Button
+                android:id="@+id/btnOpenWebsite"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/btn_open_website"
+                android:textColor="#FFFFFF"
+                android:background="#6A1B9A"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btnViewLogs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="Nhật ký hoạt động"
+                android:textColor="#FFFFFF"
+                android:background="#E65100"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvActiveDictStatus"
